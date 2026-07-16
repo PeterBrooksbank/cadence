@@ -1,0 +1,29 @@
+{
+  "name": "work-tracker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "deploy": "npm run build && wrangler deploy",
+    "typecheck": "tsc -b --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply work-tracker-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply work-tracker-db --remote"
+  },
+  "dependencies": {
+    "hono": "^4.6.14",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.0.0",
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "wrangler": "^4.86.0"
+  }
+}
