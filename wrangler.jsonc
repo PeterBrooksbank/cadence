@@ -10,6 +10,9 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*", "/auth/*"]
   },
+  "routes": [
+    { "pattern": "cadence.peterbrooksbank.com", "custom_domain": true }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
