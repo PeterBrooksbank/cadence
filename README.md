@@ -2,10 +2,14 @@
 
 A personal client/work tracker, deployed as a single Cloudflare Worker (React SPA + Hono API + D1), gated by Google OAuth, with items addable via a personal API token.
 
+Live at **https://cadence.peterbrooksbank.com**.
+
 ## Already done
 
 - D1 database `work-tracker-db` created and migrated (both `--local` and `--remote`), seeded with one workspace: **Agency51**.
-- `wrangler.jsonc` configured with the assets binding, D1 binding, and `run_worker_first` for `/api/*` and `/auth/*`.
+- `wrangler.jsonc` configured with the assets binding, D1 binding, `run_worker_first` for `/api/*` and `/auth/*`, and a `custom_domain` route for `cadence.peterbrooksbank.com`.
+- Deployed, with `COOKIE_SECRET`, `ALLOWED_EMAIL`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` set as Worker secrets.
+- Google OAuth client's authorized redirect URI should be `https://cadence.peterbrooksbank.com/auth/callback` — update it in [Google Cloud Console](https://console.cloud.google.com/apis/credentials) if it's still pointing at the old `*.workers.dev` URL.
 
 ## Remaining setup (run these yourself — they touch your live Cloudflare/Google accounts)
 
