@@ -70,6 +70,28 @@ export interface ClientGroupVM {
   pct: number;
 }
 
+const PRIORITY_ORDER: Record<Priority, number> = {
+  high: 0,
+  med: 1,
+  low: 2,
+};
+
+function compareDerivedItems(a: DerivedItem, b: DerivedItem): number {
+  const priorityDiff = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+  if (priorityDiff !== 0) return priorityDiff;
+
+  if (a.due_date && b.due_date) {
+    const dueDiff = a.due_date.localeCompare(b.due_date);
+    if (dueDiff !== 0) return dueDiff;
+  } else if (a.due_date) {
+    return -1;
+  } else if (b.due_date) {
+    return 1;
+  }
+
+  return a.created_at - b.created_at;
+}
+
 export function deriveGroups(clients: Client[], activeItems: Item[], dueSoonDays: number): ClientGroupVM[] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -78,7 +100,8 @@ export function deriveGroups(clients: Client[], activeItems: Item[], dueSoonDays
   return clients.map((client) => {
     const items = activeItems
       .filter((i) => i.client_id === client.id)
-      .map((i) => deriveItem(i, byClient.get(client.id), dueSoonDays, today));
+      .map((i) => deriveItem(i, byClient.get(client.id), dueSoonDays, today))
+      .sort(compareDerivedItems);
     const doneCount = items.filter((i) => i.done).length;
     const overdueCount = items.filter((i) => i.overdue).length;
     return {
@@ -92,6 +115,14 @@ export function deriveGroups(clients: Client[], activeItems: Item[], dueSoonDays
       pct: items.length ? Math.round((doneCount / items.length) * 100) : 0,
     };
   });
+}
+
+export function deriveSortedItems(clients: Client[], activeItems: Item[], dueSoonDays: number): DerivedItem[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const byClient = new Map<string, Client>(clients.map((c) => [c.id, c]));
+
+  return activeItems.map((i) => deriveItem(i, byClient.get(i.client_id), dueSoonDays, today)).sort(compareDerivedItems);
 }
 
 export function deriveArchivedItems(clients: Client[], items: Item[], dueSoonDays: number): DerivedItem[] {

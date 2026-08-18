@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useAuth } from "./useAuth";
 import { useWorkspaces } from "./useWorkspaces";
 import { useWorkTracker } from "./useWorkTracker";
-import { deriveArchivedItems, deriveGroups } from "./deriveViewModel";
+import { deriveArchivedItems, deriveGroups, deriveSortedItems } from "./deriveViewModel";
 import { Login } from "./components/Login";
 import { Toolbar } from "./components/Toolbar";
 import { WorkspaceSwitcher } from "./components/WorkspaceSwitcher";
@@ -12,6 +12,7 @@ import { ArchivePanel } from "./components/ArchivePanel";
 import { ClientChips } from "./components/ClientChips";
 import { FocusBar } from "./components/FocusBar";
 import { ClientGroupSection } from "./components/ClientGroupSection";
+import { AllTasksSection } from "./components/AllTasksSection";
 import { Settings } from "./components/Settings";
 
 const DUE_SOON_DAYS = 3;
@@ -29,6 +30,7 @@ export function App() {
 
   const activeItems = useMemo(() => items.filter((i) => !i.archived), [items]);
   const groups = useMemo(() => deriveGroups(clients, activeItems, DUE_SOON_DAYS), [clients, activeItems]);
+  const sortedItems = useMemo(() => deriveSortedItems(clients, activeItems, DUE_SOON_DAYS), [clients, activeItems]);
   const archivedItems = useMemo(() => deriveArchivedItems(clients, items, DUE_SOON_DAYS), [clients, items]);
 
   const doneTotal = activeItems.filter((i) => i.status === "done").length;
@@ -82,6 +84,22 @@ export function App() {
         )}
 
         {archiveOpen && <ArchivePanel items={archivedItems} onRestore={(id) => patchItem(id, { archived: false })} />}
+
+        <AllTasksSection
+          items={sortedItems}
+          onToggleDone={(id) => {
+            const item = items.find((i) => i.id === id);
+            if (!item) return;
+            patchItem(id, { status: item.status === "done" ? "todo" : "done" });
+          }}
+          onCycleStatus={(id) => {
+            const item = items.find((i) => i.id === id);
+            if (!item) return;
+            const next = item.status === "todo" ? "progress" : item.status === "progress" ? "done" : "todo";
+            patchItem(id, { status: next });
+          }}
+          onArchiveItem={(id) => patchItem(id, { archived: true })}
+        />
 
         <ClientChips groups={groups} focusedId={focusClientId} onSelect={(id) => setFocusClientId((cur) => (cur === id ? null : id))} />
 

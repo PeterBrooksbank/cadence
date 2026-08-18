@@ -2,11 +2,15 @@ import { PRIORITY_META, STATUS_META, type DerivedItem } from "../deriveViewModel
 
 export function ItemRow({
   item,
+  contextLabel,
+  contextColor,
   onToggleDone,
   onCycleStatus,
   onArchive,
 }: {
   item: DerivedItem;
+  contextLabel?: string;
+  contextColor?: string;
   onToggleDone: () => void;
   onCycleStatus: () => void;
   onArchive: () => void;
@@ -28,6 +32,12 @@ export function ItemRow({
         {item.done ? "✓" : ""}
       </div>
       <div className="item-main">
+        {contextLabel && (
+          <div className="item-context">
+            <span className="dot" style={{ background: contextColor ?? item.clientColor }} />
+            <span>{contextLabel}</span>
+          </div>
+        )}
         <div className="item-title" style={{ textDecoration: item.done ? "line-through" : "none" }}>
           {item.title}
         </div>
