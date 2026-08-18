@@ -100,8 +100,7 @@ export function deriveGroups(clients: Client[], activeItems: Item[], dueSoonDays
   return clients.map((client) => {
     const items = activeItems
       .filter((i) => i.client_id === client.id)
-      .map((i) => deriveItem(i, byClient.get(client.id), dueSoonDays, today))
-      .sort(compareDerivedItems);
+      .map((i) => deriveItem(i, byClient.get(client.id), dueSoonDays, today));
     const doneCount = items.filter((i) => i.done).length;
     const overdueCount = items.filter((i) => i.overdue).length;
     return {
