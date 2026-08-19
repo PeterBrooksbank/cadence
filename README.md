@@ -36,7 +36,6 @@ npm run deploy
 
 Note the deployed URL, e.g. `https://work-tracker.<your-subdomain>.workers.dev`. Google sign-in won't work yet — that's expected, since `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` aren't set. Everything else (asset serving, `/api/config`) will already work.
 
-
 ### 4. Create a Google OAuth Client
 
 In [Google Cloud Console](https://console.cloud.google.com/apis/credentials):
